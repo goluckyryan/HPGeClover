@@ -57,8 +57,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
            = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1.,0.,0.));
-  fParticleGun->SetParticleEnergy(9*MeV);
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,0.*cm));
+  fParticleGun->SetParticleEnergy(6.13*MeV);
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm, 0.0*cm));
 
 }
 
@@ -77,13 +77,20 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //
   //distribution uniform in solid angle
   //
-  G4double cosTheta = 2*G4UniformRand() - 1., phi = twopi*G4UniformRand();
+  //G4double cosTheta = 2*G4UniformRand() - 1.;
+  G4double cosTheta = 1.- (1.-cos(atan(2.5/17.)))*G4UniformRand();
+  G4double phi = twopi*G4UniformRand();
   G4double sinTheta = std::sqrt(1. - cosTheta*cosTheta);
   G4double ux = sinTheta*std::cos(phi),
            uy = sinTheta*std::sin(phi),
            uz = cosTheta;
 
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(ux,uy,uz));
+
+  G4double stateRand = G4UniformRand();
+  if( stateRand < 69./(69.+5.+1.) ) fParticleGun->SetParticleEnergy(6.129*MeV);
+  if( 74./(69.+5.+1.) > stateRand && stateRand > 69./(69.+5.+1.) ) fParticleGun->SetParticleEnergy(7.115*MeV);
+  if( 74./(69.+5.+1.) < stateRand  ) fParticleGun->SetParticleEnergy(2.742*MeV);
   
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }

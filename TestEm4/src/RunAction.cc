@@ -45,11 +45,14 @@ RunAction::RunAction()
 {
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   analysisManager->SetVerboseLevel(1);  
-  analysisManager->SetFirstHistoId(1);
+  analysisManager->SetFirstHistoId(1); // first id of histogram
     
   // Creating histograms
   //
-  analysisManager->CreateH1("1","energy (MeV) deposited in C6F6",100,0.,10.);
+  analysisManager->CreateH1("h1","energy (MeV) deposited in HPGe",8000,0.,8.);
+  analysisManager->SetH1XAxisTitle(1, "[MeV]" );
+  analysisManager->SetH1YAxisTitle(1, "count / 1 keV" );
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
