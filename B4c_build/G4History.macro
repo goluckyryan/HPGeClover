@@ -1,0 +1,32 @@
+/run/verbose 2
+/run/initialize
+/control/execute vis.mac
+/vis/open OGL 600x600-0+0
+/vis/sceneHandler/create OGL
+/control/execute my.mac
+/control/verbose 2
+/run/verbose 2
+/vis/open VRML2FILE
+/vis/sceneHandler/create VRML2FILE
+/vis/viewer/create ! ! 600
+/vis/drawVolume
+/vis/scene/create
+/vis/scene/add/volume world -1 -1 none m 0 0 0 0 0 0
+/vis/sceneHandler/attach
+/vis/scene/add/axes 0 0 0 0.1 m
+/vis/scene/notifyHandlers
+/vis/scene/add/hits
+/vis/scene/notifyHandlers
+/vis/scene/add/trajectories
+/tracking/storeTrajectory 1
+/vis/scene/notifyHandlers
+/vis/scene/endOfEventAction accumulate
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings
+/globalField/setValue 0 0 0 tesla
+/tracking/verbose 2
+/event/verbose 0
+/gun/particle gamma
+/gun/energy 6 MeV
+/run/beamOn 500
+/vis/scene/notifyHandlers scene-0
