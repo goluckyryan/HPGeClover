@@ -18,8 +18,11 @@ CloverCrystalHit::CloverCrystalHit()
    fTrackID(-1),
    fCrysalID(-1),
    fEdep(0.),
-   fPos(G4ThreeVector())
-{}
+   fPos(G4ThreeVector()),
+   fStepLength(0.)
+{
+
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -31,9 +34,12 @@ CloverCrystalHit::CloverCrystalHit(const CloverCrystalHit& right)
   : G4VHit()
 {
   fTrackID   = right.fTrackID;
-  fCrysalID = right.fCrysalID;
+  fCrysalID  = right.fCrysalID;
   fEdep      = right.fEdep;
   fPos       = right.fPos;
+
+  fStepLength = right.fStepLength;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -41,9 +47,11 @@ CloverCrystalHit::CloverCrystalHit(const CloverCrystalHit& right)
 const CloverCrystalHit& CloverCrystalHit::operator=(const CloverCrystalHit& right)
 {
   fTrackID   = right.fTrackID;
-  fCrysalID = right.fCrysalID;
+  fCrysalID  = right.fCrysalID;
   fEdep      = right.fEdep;
   fPos       = right.fPos;
+
+  fStepLength = right.fStepLength;
 
   return *this;
 }
@@ -60,10 +68,12 @@ G4bool CloverCrystalHit::operator==(const CloverCrystalHit& right) const
 void CloverCrystalHit::Print()
 {
   G4cout
-     << "  trackID: " << fTrackID << " Crystal: " << fCrysalID << " |"
-     << "Edep: "
+     << "  trackID: " << fTrackID << " Crystal: " << fCrysalID 
+     << "  Edep: "
      << std::setw(7) << G4BestUnit(fEdep,"Energy")
-     << " Position: "
+     << "  StepLen: "
+     << std::setw(7) << G4BestUnit(fStepLength,"Length")
+     << "  Position: "
      << std::setw(7) << G4BestUnit( fPos,"Length")
      << G4endl;
 }

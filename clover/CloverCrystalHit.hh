@@ -35,10 +35,12 @@ class CloverCrystalHit : public G4VHit
     virtual void Print();
 
     // Set methods
-    void SetTrackID   (G4int track)      { fTrackID = track; };
-    void SetCrystalID (G4int id)         { fCrysalID = id; };
-    void SetEdep      (G4double de)      { fEdep = de; };
-    void SetPos       (G4ThreeVector xyz){ fPos = xyz; };
+    void SetTrackID    (G4int track)      { fTrackID = track; };
+    void SetCrystalID  (G4int id)         { fCrysalID = id; };
+    void SetEdep       (G4double de)      { fEdep += de; };
+    void SetPos        (G4ThreeVector xyz){ fPos = xyz; };
+    
+    void SetStepLength (G4double sl)      { fStepLength += sl; };
 
     // Get methods
     G4int GetTrackID() const     { return fTrackID; };
@@ -46,12 +48,16 @@ class CloverCrystalHit : public G4VHit
     G4double GetEdep() const     { return fEdep; };
     G4ThreeVector GetPos() const { return fPos; };
 
+    G4double GetStepLength () const  { return fStepLength ; };
+
   private:
 
     G4int         fTrackID;
     G4int         fCrysalID;
     G4double      fEdep;
     G4ThreeVector fPos;
+    G4double      fStepLength;
+
 
 };
 

@@ -32,7 +32,13 @@ void CloverCrystalSD::Initialize(G4HCofThisEvent* hce)
 
   // Add this collection in hce
   G4int hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);  
-  hce->AddHitsCollection( hcID, fHitsCollection ); 
+  hce->AddHitsCollection( hcID, fHitsCollection );
+
+  for (G4int i=0; i<4; i++ ) {
+    fHitsCollection->insert(new CloverCrystalHit());
+  }
+
+  G4cout << "######### size of fHitCollection : " <<  fHitsCollection->GetSize() << G4endl;
 
 }
 
@@ -52,13 +58,27 @@ G4bool CloverCrystalSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*
 
   if ( edep==0. && stepLength == 0. ) return false;
 
-  CloverCrystalHit* newHit = new CloverCrystalHit();
 
+  G4int crystalID = step->GetPreStepPoint()->GetTouchableHandle() ->GetCopyNumber();
+
+  CloverCrystalHit * hit = (*fHitsCollection)[crystalID];
+
+  hit->SetTrackID  (step->GetTrack()->GetTrackID());
+  hit->SetEdep(edep);
+  hit->SetPos (step->GetPostStepPoint()->GetPosition());
+  hit->SetStepLength( stepLength);
+  hit->SetCrystalID(crystalID);
+  
+  CloverCrystalHit* newHit = new CloverCrystalHit();
+  
   newHit->SetTrackID  (step->GetTrack()->GetTrackID());
-  newHit->SetCrystalID(step->GetPreStepPoint()->GetTouchableHandle() ->GetCopyNumber());
+  
+  //G4int crystalID = step->GetPreStepPoint()->GetTouchableHandle() ->GetCopyNumber();
+  newHit->SetCrystalID(crystalID);
   newHit->SetEdep(edep);
   newHit->SetPos (step->GetPostStepPoint()->GetPosition());
-
+  newHit->SetStepLength( stepLength);
+  
   fHitsCollection->insert( newHit );
 
 /*
@@ -101,7 +121,8 @@ G4bool CloverCrystalSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*
 void CloverCrystalSD::EndOfEvent(G4HCofThisEvent*)
 {
   if ( verboseLevel > -1 ) { 
-     G4int nofHits = fHitsCollection->entries();
+//     G4int nofHits = fHitsCollection->entries();
+     G4int nofHits = fHitsCollection->GetSize();
      G4cout
        << G4endl 
        << "-------->Hits Collection: in this event they are " << nofHits 
