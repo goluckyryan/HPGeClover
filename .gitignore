@@ -16,3 +16,5 @@ core.*
 .DS_Store
 
 *.wrl
+
+*_build

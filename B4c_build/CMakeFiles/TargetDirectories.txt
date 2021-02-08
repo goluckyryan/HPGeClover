@@ -1,7 +1,0 @@
-/home/ryantang/Clover/B4c_build/CMakeFiles/install/strip.dir
-/home/ryantang/Clover/B4c_build/CMakeFiles/edit_cache.dir
-/home/ryantang/Clover/B4c_build/CMakeFiles/exampleB4c.dir
-/home/ryantang/Clover/B4c_build/CMakeFiles/rebuild_cache.dir
-/home/ryantang/Clover/B4c_build/CMakeFiles/list_install_components.dir
-/home/ryantang/Clover/B4c_build/CMakeFiles/install/local.dir
-/home/ryantang/Clover/B4c_build/CMakeFiles/install.dir
