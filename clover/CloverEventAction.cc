@@ -18,11 +18,15 @@
 
 CloverEventAction::CloverEventAction()
  : G4UserEventAction(),
-   fAbsHCID(-1)
+   fCrystalHCID(-1),
+   fNDet(4) // number of crystal, must be matched in CloverDetectorConstruction
 {
-  fDetList.clear();
   fdEList.clear();
   fdLList.clear();
+  for(int i = 0 ; i < fNDet; i++){
+    fdEList.push_back(0.);
+    fdLList.push_back(0.);
+  }
 
   eventTheta = 0;
   eventPhi   = 0;
@@ -81,85 +85,62 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
   if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
 
   // periodic printing
+//  G4cout << "######################################### CloverEventAction::EndOfEventAction" << G4endl;
+//  G4int eventID = event->GetEventID();
+//  if ( eventID < 100 || eventID % 100 == 0) {
+//    G4cout << ">>>>>>>> Event: " << eventID  << G4endl;
+//    if ( trajectoryContainer ) {
+//      G4cout << "    " << n_trajectories
+//             << " trajectories stored in this event." << G4endl;
+//    }
+//    G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
+//    G4cout << "    "  
+//           << hc->GetSize() << " hits stored in this event" << G4endl;
+//  }
 
-  G4int eventID = event->GetEventID();
-  if ( eventID < 100 || eventID % 100 == 0) {
-    G4cout << ">>> Event: " << eventID  << G4endl;
-    if ( trajectoryContainer ) {
-      G4cout << "    " << n_trajectories
-             << " trajectories stored in this event." << G4endl;
-    }
-    G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
-    G4cout << "    "  
-           << hc->GetSize() << " hits stored in this event" << G4endl;
-  }
-
-  /*
-  G4cout << "######################################### CloverEventAction::EndOfEventAction" << G4endl;
-
+  //G4cout
+  //  << "Enegry : " <<  eventEnergy << G4endl
+  //  << "Theta  : " <<  eventTheta << G4endl
+  //  << "Phi    : " <<  eventPhi << G4endl;
+    
+  
   // Get hits collections IDs (only once)
-  if ( fAbsHCID == -1 ) {
-    fAbsHCID = G4SDManager::GetSDMpointer()->GetCollectionID("CrystalHitsCollection");
+  if ( fCrystalHCID == -1 ) {
+    fCrystalHCID = G4SDManager::GetSDMpointer()->GetCollectionID("CrystalHitsCollection");
   }
 
   // Get hits collections
-  auto absoHC = GetHitsCollection(fAbsHCID, event); //this is G4VHitsCollection
-
-  G4cout
-    << "Enegry : " <<  eventEnergy << G4endl
-    << "Theta  : " <<  eventTheta << G4endl
-    << "Phi    : " <<  eventPhi << G4endl;
-    
-  
+  auto crystalHC = GetHitsCollection(fCrystalHCID, event); //this is G4VHitsCollection
 
   // Get hit with total values
-  G4cout << "=========== number of Hit Collection : " << absoHC->entries() << G4endl;
+  G4cout << "=========== number of Hit Collection : " << crystalHC->entries() << G4endl;
 
-  auto absoHit = (*absoHC)[absoHC->entries()-1];  //this is CloverCalorHit :: G4VHit
+  for( int i = 0 ; i < fNDet ; i++){
+    CloverCrystalHit * crystalHit = (*crystalHC)[i];  //this is CloverCrystalHit :: G4VHit
 
-  int nHit = absoHit->GetNumHit();
-  fDetList = absoHit->GetDetID();
+    //add detector resolution of 1%
 
-  // Print per event (modulo n)
-  auto eventID = event->GetEventID();
-  auto printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
-  if ( ( printModulo > 0 ) && ( eventID % printModulo == 0 ) ) {
-    G4cout << "================> End of event Summary, eventID: " << eventID << G4endl;
+    G4double edep = crystalHit->GetEdep();
+    G4double resol = G4RandGauss::shoot(1, 0.001);
 
-    G4cout << "Number of hit : " << nHit << G4endl;    
+    fdEList[i] = edep * resol;
+    fdLList[i] = crystalHit->GetStepLength();
 
-    PrintEventStatistics( absoHit->GetEdep(), absoHit->GetTrackLength());
+  }
 
-    for(int i = 0; i < nHit ; i ++ ){
-      G4cout << fDetList[i] << " " ;
-    }
-    G4cout << G4endl;
-
-    G4cout << "######################################" <<  G4endl;     
-  }  
-
+  
   // get analysis manager
   auto analysisManager = G4AnalysisManager::Instance();
  
-  // fill histograms
-  //analysisManager->FillH1(0, absoHit->GetEdep());
-  //analysisManager->FillH1(1, absoHit->GetTrackLength());
-  
   // fill ntuple
+  analysisManager->FillNtupleIColumn(0, n_trajectories);
 
-  //add detector resolution of 1%
-  
-  analysisManager->FillNtupleDColumn(0, absoHit->GetEdep());
-  analysisManager->FillNtupleDColumn(1, absoHit->GetTrackLength());
-  analysisManager->FillNtupleDColumn(2, absoHit->GetNumHit()+1);
-
-  analysisManager->FillNtupleDColumn(4, eventTheta);
-  analysisManager->FillNtupleDColumn(5, eventPhi);
-  analysisManager->FillNtupleDColumn(6, eventEnergy);
+  analysisManager->FillNtupleDColumn(3, eventTheta);
+  analysisManager->FillNtupleDColumn(4, eventPhi);
+  analysisManager->FillNtupleDColumn(5, eventEnergy);
   
   analysisManager->AddNtupleRow();
-  *
-  */ 
+
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

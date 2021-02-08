@@ -35,7 +35,7 @@ CloverDetectorConstruction::CloverDetectorConstruction()
    fNumOfCrystal(0),
    fLogicCrystal(NULL), fCrystalMaterial(NULL)
 {
-  fNumOfCrystal = 4;
+  fNumOfCrystal = 4;  //also need to change the fNDet in CloverEventAction.cc
   fLogicCrystal = new G4LogicalVolume* [fNumOfCrystal];
 }
 
@@ -159,7 +159,7 @@ void CloverDetectorConstruction::ConstructSDandField()
   G4SDManager::GetSDMpointer()->SetVerboseLevel(1);
 
   // Sensitive detectors
-  CloverCrystalSD * crystalSD = new CloverCrystalSD("Crystal", "CrystalHitsCollection");
+  CloverCrystalSD * crystalSD = new CloverCrystalSD("Crystal", "CrystalHitsCollection", fNumOfCrystal);
   G4SDManager::GetSDMpointer()->AddNewDetector(crystalSD);
 
   //Set crystalSD to all logical volumn under the same name of "CrystalLV"

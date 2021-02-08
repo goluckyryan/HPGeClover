@@ -46,7 +46,9 @@ target_link_libraries(clover ${Geant4_LIBRARIES})
 
 set(CLOVER_SCRIPTS
   init_vis.mac
-  )
+  vis.mac
+  my.in
+)
 
 foreach(_script ${CLOVER_SCRIPTS})
   configure_file(

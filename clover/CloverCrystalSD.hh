@@ -14,7 +14,7 @@ class G4HCofThisEvent;
 class CloverCrystalSD : public G4VSensitiveDetector
 {
   public:
-    CloverCrystalSD(const G4String& name, const G4String& hitsCollectionName);
+    CloverCrystalSD(const G4String& name, const G4String& hitsCollectionName, const G4int nCrystal);
     virtual ~CloverCrystalSD();
   
     // methods from base class
@@ -24,6 +24,8 @@ class CloverCrystalSD : public G4VSensitiveDetector
 
   private:
     CloverCrystalHitsCollection* fHitsCollection;
+
+    G4int fNDet;
 };
 
 #endif

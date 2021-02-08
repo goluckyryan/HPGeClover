@@ -29,23 +29,28 @@ public:
   void SaveEventPhi(G4double Phi) {eventPhi = Phi;}
   void SaveEventEnergy(G4double energy) {eventEnergy = energy;}
 
-  std::vector<G4int>& GetDetList() {return fDetList;}
-    
+  std::vector<G4double>& GetdEList()  {return fdEList;};
+  std::vector<G4double>& GetStepLengthList()  {return fdLList;};
+
+
 private:
   // methods
   CloverCrystalHitsCollection* GetHitsCollection(G4int hcID, const G4Event* event) const;
   void PrintEventStatistics(G4double absoEdep, G4double absoTrackLength) const;
   
   // data members                   
-  G4int  fAbsHCID;
+  G4int  fCrystalHCID; // Hit collection ID
 
   G4double eventTheta;
   G4double eventPhi;
   G4double eventEnergy;
 
-  std::vector<G4int>    fDetList;  // hit det list
-  std::vector<G4double> fdEList;   // dE list
-  std::vector<G4double> fdLList;   // length list
+  G4int fNDet;
+
+  std::vector<G4double> fdEList;   // dE of each crystal
+  std::vector<G4double> fdLList;   // step length of each crystal
+
+  //std::vector<G4double> fLastPost; //last tracking position
   
   
 };

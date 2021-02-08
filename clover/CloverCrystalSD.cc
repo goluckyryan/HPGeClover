@@ -8,22 +8,23 @@
 #include "G4ios.hh"
 #include "G4SystemOfUnits.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+///....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-CloverCrystalSD::CloverCrystalSD(const G4String& name, const G4String& hitsCollectionName)
+CloverCrystalSD::CloverCrystalSD(const G4String& name, const G4String& hitsCollectionName, const G4int nCrystal)
  : G4VSensitiveDetector(name),
-   fHitsCollection(nullptr)
+   fHitsCollection(nullptr),
+   fNDet(nCrystal)
 {
   collectionName.insert(hitsCollectionName);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+///....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 CloverCrystalSD::~CloverCrystalSD() 
 { 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+///....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void CloverCrystalSD::Initialize(G4HCofThisEvent* hce)
 {
@@ -34,15 +35,15 @@ void CloverCrystalSD::Initialize(G4HCofThisEvent* hce)
   G4int hcID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]);  
   hce->AddHitsCollection( hcID, fHitsCollection );
 
-  for (G4int i=0; i<4; i++ ) {
+  for (G4int i=0; i<fNDet; i++ ) {
     fHitsCollection->insert(new CloverCrystalHit());
   }
 
-  G4cout << "######### size of fHitCollection : " <<  fHitsCollection->GetSize() << G4endl;
+  //G4cout << "######### size of fHitCollection : " <<  fHitsCollection->GetSize() << G4endl;
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+///....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4bool CloverCrystalSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*/)
 {
@@ -61,6 +62,7 @@ G4bool CloverCrystalSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*
 
   G4int crystalID = step->GetPreStepPoint()->GetTouchableHandle() ->GetCopyNumber();
 
+  //----------- save hit in each crystal
   CloverCrystalHit * hit = (*fHitsCollection)[crystalID];
 
   hit->SetTrackID  (step->GetTrack()->GetTrackID());
@@ -68,12 +70,12 @@ G4bool CloverCrystalSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*
   hit->SetPos (step->GetPostStepPoint()->GetPosition());
   hit->SetStepLength( stepLength);
   hit->SetCrystalID(crystalID);
-  
+
+
+  //---------- Save indivual hit
   CloverCrystalHit* newHit = new CloverCrystalHit();
   
   newHit->SetTrackID  (step->GetTrack()->GetTrackID());
-  
-  //G4int crystalID = step->GetPreStepPoint()->GetTouchableHandle() ->GetCopyNumber();
   newHit->SetCrystalID(crystalID);
   newHit->SetEdep(edep);
   newHit->SetPos (step->GetPostStepPoint()->GetPosition());
@@ -81,54 +83,26 @@ G4bool CloverCrystalSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*
   
   fHitsCollection->insert( newHit );
 
-/*
-
-  auto touchable = (step->GetPreStepPoint()->GetTouchable());
-    
-  // Get calorimeter cell id 
-  auto layerNumber = touchable->GetReplicaNumber(1);
-
-  detID = touchable->GetCopyNumber() ;
-
-  G4cout << "******************* " << detID <<G4endl;
-  
-  // Get hit accounting data for this cell
-  auto hit = (*fHitsCollection)[layerNumber];
-  if ( ! hit ) {
-    G4ExceptionDescription msg;
-    msg << "Cannot access hit " << layerNumber; 
-    G4Exception("CloverCrystalSD::ProcessHits()",
-      "MyCode0004", FatalException, msg);
-
-  }else{
-
-  }         
-
-  // Get hit for total accounting
-  //auto hitTotal = (*fHitsCollection)[fHitsCollection->entries()-1];
-  
-  // Add values
-  hit->Add(edep, stepLength, detID);
-  //hitTotal->Add(edep, stepLength, detID);
-
-*/
 
   return true;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+///....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void CloverCrystalSD::EndOfEvent(G4HCofThisEvent*)
 {
-  if ( verboseLevel > -1 ) { 
-//     G4int nofHits = fHitsCollection->entries();
+  if ( verboseLevel > 1 ) { 
      G4int nofHits = fHitsCollection->GetSize();
      G4cout
        << G4endl 
-       << "-------->Hits Collection: in this event they are " << nofHits 
+       << ">>>>>>>>>>Hits Collection: in this event they are " << nofHits 
        << " hits in the tracker chambers: " << G4endl;
-     for ( G4int i=0; i<nofHits; ++i ) (*fHitsCollection)[i]->Print();
+     for ( G4int i=0; i<nofHits; ++i ) {
+       if( i == fNDet ) G4cout << "---------------------------" << G4endl;
+       G4cout << i << " |";
+       (*fHitsCollection)[i]->Print();
+     }
   }
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+///....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

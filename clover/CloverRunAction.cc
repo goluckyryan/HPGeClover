@@ -20,7 +20,6 @@ CloverRunAction::CloverRunAction(CloverEventAction * eventAction)
   // set printing event number per each event
   G4RunManager::GetRunManager()->SetPrintProgress(1);     
 
- /*
   // Create analysis manager
   // The choice of analysis technology is done via selectin of a namespace
   // in CloverAnalysis.hh
@@ -34,10 +33,9 @@ CloverRunAction::CloverRunAction(CloverEventAction * eventAction)
   // Creating ntuple
   //
   analysisManager->CreateNtuple("Clover", "Edep and TrackL");
-  analysisManager->CreateNtupleDColumn("Eabs");
-  analysisManager->CreateNtupleDColumn("Labs");
-  analysisManager->CreateNtupleIColumn("nHit");
-  analysisManager->CreateNtupleIColumn("DetID", fEventAction->GetDetList() );
+  analysisManager->CreateNtupleIColumn("nTrajectory");
+  analysisManager->CreateNtupleDColumn("energy", fEventAction->GetdEList() );
+  analysisManager->CreateNtupleDColumn("stepLength", fEventAction->GetStepLengthList() );
 
   // event inital angle, energy
   analysisManager->CreateNtupleDColumn("theta");
@@ -45,8 +43,6 @@ CloverRunAction::CloverRunAction(CloverEventAction * eventAction)
   analysisManager->CreateNtupleDColumn("e");
   
   analysisManager->FinishNtuple();
-  *
-  */
    
 }
 
@@ -54,7 +50,7 @@ CloverRunAction::CloverRunAction(CloverEventAction * eventAction)
 
 CloverRunAction::~CloverRunAction()
 {
-  //delete G4AnalysisManager::Instance();  
+  delete G4AnalysisManager::Instance();  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -63,29 +59,28 @@ void CloverRunAction::BeginOfRunAction(const G4Run* /*run*/)
 { 
   //inform the runManager to save random number seed
   //G4RunManager::GetRunManager()->SetRandomNumberStore(true);
-  /*
+  
   // Get analysis manager
   auto analysisManager = G4AnalysisManager::Instance();
 
   // Open an output file
-  //
   G4String fileName = "Clover.root";
   analysisManager->OpenFile(fileName);
-  * */
+ 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void CloverRunAction::EndOfRunAction(const G4Run* /*run*/)
 {
-  /*
+  
   auto analysisManager = G4AnalysisManager::Instance();
 
   // save histograms & ntuple
   //
   analysisManager->Write();
   analysisManager->CloseFile();
-  */ 
+   
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
