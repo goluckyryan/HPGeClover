@@ -70,6 +70,9 @@ void CloverDetectorConstruction::DefineMaterials()
   // Air
   nistManager->FindOrBuildMaterial("G4_AIR");
 
+  // Iron
+  nistManager->FindOrBuildMaterial("G4_Fe");
+
   // Ge
   fCrystalMaterial = nistManager->FindOrBuildMaterial("G4_Ge");
 
@@ -86,7 +89,7 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   G4double crystalLength = 8.*cm;
   G4double crystalRadius = 2.5*cm;
 
-  G4double crystalZPos = 20.*cm + crystalLength/2.;
+  G4double crystalZPos = 25.*cm + crystalLength/2.;
 
   auto layerThickness  = crystalLength;
   auto cloverThickness = layerThickness;
@@ -96,11 +99,10 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   auto worldSizeZ  = 4 * (cloverThickness + crystalZPos); 
   
   // Get materials
-  //auto backgroundMaterial = G4Material::GetMaterial("G4_AIR");
-  auto backgroundMaterial = G4Material::GetMaterial("Galactic");
+  auto backgroundMaterial = G4Material::GetMaterial("G4_AIR");
+  //auto backgroundMaterial = G4Material::GetMaterial("Galactic");
    
   // World
-
   auto worldS = new G4Box("World",  worldSizeXY/2, worldSizeXY/2, worldSizeZ/2); 
                          
   auto worldLV = new G4LogicalVolume( worldS,  backgroundMaterial, "World"); 
@@ -116,6 +118,20 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
 
   worldLV->SetVisAttributes (G4VisAttributes::GetInvisible());
 
+  // vaccum Pipe
+  
+  G4Box* pipe = new G4Box("pipe", 20 * cm , 20 *cm, 3* mm);
+  G4LogicalVolume * pipeLV = new G4LogicalVolume( pipe, G4Material::GetMaterial("G4_Fe"), "Pipe");
+  new G4PVPlacement( 0,                // no rotation
+                 G4ThreeVector(0, 0, 20. * cm),  // at (0,0,0)
+                 pipeLV,          // its logical volume                         
+                 "Pipe",          // its name
+                 worldLV,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps
+
+  pipeLV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
                     
   // Crystals
   G4VisAttributes * crystalVisAtt= new G4VisAttributes(G4Colour(0.5,0.5,1.0));

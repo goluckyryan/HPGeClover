@@ -86,17 +86,17 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
 
   // periodic printing
 //  G4cout << "######################################### CloverEventAction::EndOfEventAction" << G4endl;
-//  G4int eventID = event->GetEventID();
-//  if ( eventID < 100 || eventID % 100 == 0) {
-//    G4cout << ">>>>>>>> Event: " << eventID  << G4endl;
-//    if ( trajectoryContainer ) {
-//      G4cout << "    " << n_trajectories
-//             << " trajectories stored in this event." << G4endl;
-//    }
-//    G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
-//    G4cout << "    "  
-//           << hc->GetSize() << " hits stored in this event" << G4endl;
-//  }
+  //G4int eventID = event->GetEventID();
+  //if ( eventID < 100 || eventID % 1000 == 0) {
+  //  G4cout << ">>>>>>>> Event: " << eventID  << G4endl;
+  //  if ( trajectoryContainer ) {
+  //    G4cout << "    " << n_trajectories
+  //           << " trajectories stored in this event." << G4endl;
+  //  }
+  //  G4VHitsCollection* hc = event->GetHCofThisEvent()->GetHC(0);
+  //  G4cout << "    "  
+  //         << hc->GetSize() << " hits stored in this event" << G4endl;
+  //}
 
   //G4cout
   //  << "Enegry : " <<  G4BestUnit( eventEnergy,"Energy") << G4endl
@@ -120,7 +120,7 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
     G4double edep = crystalHit->GetEdep();
     G4double resol = G4RandGauss::shoot(1, 0.001);
 
-    fdEList[i] = edep * resol;
+    fdEList[i] = edep * resol * 1000;  // to keV
     fdLList[i] = crystalHit->GetStepLength();
 
   }
