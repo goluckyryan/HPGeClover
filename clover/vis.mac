@@ -50,7 +50,7 @@
 
 
 # Draw coordinate axes:
-#/vis/scene/add/axes 0 0 0 1.1 m
+/vis/scene/add/axes 0 0 0 0.1 m
 
 # output only detector
 #/vis/viewer/flush

@@ -99,7 +99,7 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
 //  }
 
   //G4cout
-  //  << "Enegry : " <<  eventEnergy << G4endl
+  //  << "Enegry : " <<  G4BestUnit( eventEnergy,"Energy") << G4endl
   //  << "Theta  : " <<  eventTheta << G4endl
   //  << "Phi    : " <<  eventPhi << G4endl;
     
@@ -111,9 +111,6 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
 
   // Get hits collections
   auto crystalHC = GetHitsCollection(fCrystalHCID, event); //this is G4VHitsCollection
-
-  // Get hit with total values
-  G4cout << "=========== number of Hit Collection : " << crystalHC->entries() << G4endl;
 
   for( int i = 0 ; i < fNDet ; i++){
     CloverCrystalHit * crystalHit = (*crystalHC)[i];  //this is CloverCrystalHit :: G4VHit

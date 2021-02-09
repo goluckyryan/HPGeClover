@@ -18,7 +18,7 @@ CloverRunAction::CloverRunAction(CloverEventAction * eventAction)
  ,fEventAction(eventAction)
 { 
   // set printing event number per each event
-  G4RunManager::GetRunManager()->SetPrintProgress(1);     
+  //G4RunManager::GetRunManager()->SetPrintProgress(1);     
 
   // Create analysis manager
   // The choice of analysis technology is done via selectin of a namespace
@@ -33,14 +33,14 @@ CloverRunAction::CloverRunAction(CloverEventAction * eventAction)
   // Creating ntuple
   //
   analysisManager->CreateNtuple("Clover", "Edep and TrackL");
-  analysisManager->CreateNtupleIColumn("nTrajectory");
+  analysisManager->CreateNtupleIColumn("nTraj");
   analysisManager->CreateNtupleDColumn("energy", fEventAction->GetdEList() );
   analysisManager->CreateNtupleDColumn("stepLength", fEventAction->GetStepLengthList() );
 
   // event inital angle, energy
   analysisManager->CreateNtupleDColumn("theta");
   analysisManager->CreateNtupleDColumn("phi");
-  analysisManager->CreateNtupleDColumn("e");
+  analysisManager->CreateNtupleDColumn("eBeam");
   
   analysisManager->FinishNtuple();
    

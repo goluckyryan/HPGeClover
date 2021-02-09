@@ -5,6 +5,8 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 
+#include <vector>
+
 class G4ParticleGun;
 class G4Event;
 
@@ -27,6 +29,8 @@ private:
   G4ParticleGun*  fParticleGun; // G4 particle gun
 
   CloverEventAction * fEventAction;
+
+  std::vector<std::vector<G4double>> energyList;
   
 };
 

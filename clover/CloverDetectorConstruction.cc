@@ -96,7 +96,8 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   auto worldSizeZ  = 4 * (cloverThickness + crystalZPos); 
   
   // Get materials
-  auto backgroundMaterial = G4Material::GetMaterial("G4_AIR");
+  //auto backgroundMaterial = G4Material::GetMaterial("G4_AIR");
+  auto backgroundMaterial = G4Material::GetMaterial("Galactic");
    
   // World
 

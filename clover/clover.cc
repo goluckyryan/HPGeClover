@@ -32,15 +32,15 @@ int main(int argc,char** argv)
   // Construct the default run manager
   auto* runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Default);
 
-  // Set mandatory initialization classes
+  // Create the world and set the B-field
   runManager->SetUserInitialization(new CloverDetectorConstruction());
 
   // use build in physics
-  //G4VModularPhysicsList* physicsList = new FTFP_BERT;
-  //runManager->SetUserInitialization(physicsList);
+  G4VModularPhysicsList* physicsList = new FTFP_BERT;
+  runManager->SetUserInitialization(physicsList);
 
   //or use custom gamma physics
-  runManager->SetUserInitialization(new CloverPhysicsList);
+  //runManager->SetUserInitialization(new CloverPhysicsList);
 
   //Action Initialization  
   runManager->SetUserInitialization(new CloverActionInitialization());
