@@ -25,20 +25,18 @@
 #------ Sensitive detetcor verbose control
 /hits/verbose 0
 
-
+#-------override B-field
 /globalField/verbose 1
 /globalField/setValue 0.0 0.0 0.0 tesla
 
-
-#particle, 
+#-------override particle, 
 #/gun/particle gamma
 #/gun/energy 6.13 MeV
 
-/Clover/generator/OpeningAngle  10 deg
+#-------Override Opening angle
+/Clover/generator/OpeningAngle  20 deg
 
-#/gun/particle proton
-#/gun/energy 1 MeV
-
+#-------Override output root file
 /analysis/setFileName test.root
 
 /run/printProgress 100000

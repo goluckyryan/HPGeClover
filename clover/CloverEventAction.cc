@@ -85,7 +85,7 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
   if (trajectoryContainer) n_trajectories = trajectoryContainer->entries();
 
   // periodic printing
-//  G4cout << "######################################### CloverEventAction::EndOfEventAction" << G4endl;
+  //G4cout << "######################################### CloverEventAction::EndOfEventAction" << G4endl;
   //G4int eventID = event->GetEventID();
   //if ( eventID < 100 || eventID % 1000 == 0) {
   //  G4cout << ">>>>>>>> Event: " << eventID  << G4endl;

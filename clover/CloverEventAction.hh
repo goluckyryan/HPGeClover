@@ -38,7 +38,7 @@ private:
   CloverCrystalHitsCollection* GetHitsCollection(G4int hcID, const G4Event* event) const;
   void PrintEventStatistics(G4double absoEdep, G4double absoTrackLength) const;
   
-  // data members                   
+  // data members
   G4int  fCrystalHCID; // Hit collection ID
 
   G4double eventTheta;

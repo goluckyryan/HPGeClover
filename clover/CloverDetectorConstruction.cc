@@ -45,17 +45,16 @@ CloverDetectorConstruction::CloverDetectorConstruction()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 CloverDetectorConstruction::~CloverDetectorConstruction()
 {
   delete [] fLogicCrystal;
-}  
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4VPhysicalVolume* CloverDetectorConstruction::Construct()
 {
-  // Define materials 
+  // Define materials
   DefineMaterials();
   
   // Define volumes
@@ -95,23 +94,31 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   // Geometry parameters
   fNumOfCrystal = 4;
   G4double crystalLength = 8.*cm;
-  G4double crystalRadius = 2.5*cm;
-
+  G4double crystalRadius = 25.*mm;
   G4double crystalZPos = 26*cm + crystalLength/2.;
+  G4double cutXY = 46.0 * mm;
 
-  auto layerThickness  = crystalLength;
-  auto cloverThickness = layerThickness;
-  auto cloverSize      = fNumOfCrystal * 2* crystalRadius;
-  
-  auto worldSizeXY = 4 * cloverSize;
-  auto worldSizeZ  = 4 * (cloverThickness + crystalZPos); 
+  G4double worldSizeZ  = 2*(crystalLength + crystalZPos);
+  G4double worldSizeXY = worldSizeZ;
+
+  //pipe
+  G4double pipeOuterRadius     = 200* mm;
+  G4double pipeWallThickness   =  3 * mm;
+  G4double pipeLength          = 100* mm;
+  G4double pipeZPos            = 0.*cm;
+
+  //Clover casing
+  G4double caseXYInner = 2*(cutXY + 1.0) * mm;
+  G4double caseZInner  = crystalLength + 6 * mm;
+  G4double caseXYWallThickness = 3.0 * mm;
+  G4double caseZWallThickness = 3.0 * mm;
   
   // Get materials
   auto backgroundMaterial = G4Material::GetMaterial("G4_AIR");
   //auto backgroundMaterial = G4Material::GetMaterial("Galactic");
    
   // World
-  auto worldS = new G4Box("World",  worldSizeXY/2, worldSizeXY/2, worldSizeZ/2); 
+  auto worldS = new G4Box("World",  worldSizeXY/2, worldSizeXY/2, worldSizeZ); 
                          
   auto worldLV = new G4LogicalVolume( worldS,  backgroundMaterial, "World"); 
                                    
@@ -128,23 +135,22 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
 
   // vaccum Pipe
   
-  //G4Tubs * pipe = new G4Tubs("pipe", 195 *mm , 200 * mm, 10 * cm, 0, 360*degree);
-  //G4LogicalVolume * pipeLV = new G4LogicalVolume( pipe, G4Material::GetMaterial("G4_Fe"), "Pipe");
-  //
-  //G4RotationMatrix * rot = new G4RotationMatrix();
-  //rot->rotateY(90*degree);
-  //G4double pipeZPos = 0.*cm;
-  //
-  //new G4PVPlacement( rot,                // no rotation
-  //                   G4ThreeVector(0, 0, pipeZPos),  // at (0,0,0)
-  //                   pipeLV,          // its logical volume                         
-  //                   "Pipe",          // its name
-  //                   worldLV,          // its mother  volume
-  //                   false,            // no boolean operation
-  //                   0,                // copy number
-  //                   fCheckOverlaps);  // checking overlaps
-  //
-  //pipeLV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
+  G4Tubs * pipe = new G4Tubs("pipe", pipeOuterRadius - pipeWallThickness , pipeOuterRadius, pipeLength, 0, 360*degree);
+  G4LogicalVolume * pipeLV = new G4LogicalVolume( pipe, G4Material::GetMaterial("G4_AIR"), "Pipe");
+  
+  G4RotationMatrix * rot = new G4RotationMatrix();
+  rot->rotateY(90*degree);
+  
+  new G4PVPlacement( rot,                // no rotation
+                     G4ThreeVector(0, 0, pipeZPos),  // at (0,0,0)
+                     pipeLV,          // its logical volume                         
+                     "Pipe",          // its name
+                     worldLV,          // its mother  volume
+                     false,            // no boolean operation
+                     0,                // copy number
+                     fCheckOverlaps);  // checking overlaps
+  
+  pipeLV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
                     
   // Crystals
   G4VisAttributes * crystalVisAtt= new G4VisAttributes(G4Colour(0.5,0.5,1.0));
@@ -154,13 +160,14 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
     G4String name = "HPGe"+ std::to_string(i);
     G4cout << " crystal name : " << name << G4endl;
     G4double phi = 360/fNumOfCrystal * degree;
-    G4double rho = (23*mm  + 0.3* mm) / sin(phi/2.);
+
+    G4double rho = (cutXY/2  + 0.3* mm) / sin(phi/2.);
 
     G4Tubs * base = new G4Tubs("base",  0, crystalRadius, crystalLength, 0, 360*degree);
-    G4Box * cut = new G4Box("cut", 23 * mm, 23 * mm, crystalLength * 1.2);
+    G4Box * cut = new G4Box("cut", cutXY/2. , cutXY/2. , crystalLength * 1.2);
 
     G4IntersectionSolid * crystalS = new G4IntersectionSolid("HPGe", base, cut);
-            
+
     fLogicCrystal[i] = new G4LogicalVolume(crystalS, fCrystalMaterial, "CrystalLV");
 
     fLogicCrystal[i]->SetVisAttributes(crystalVisAtt);
@@ -178,22 +185,23 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   }
 
   // Al casing
-  //G4Box* case1 = new G4Box("case1", 47 * mm , 47 *mm, crystalLength + 6 * mm  );
-  //G4Box* case2 = new G4Box("case2", 47 * mm + 3*mm, 47 *mm + 3*mm, crystalLength + 12*mm);
-  //G4SubtractionSolid * casing = new G4SubtractionSolid("casing", case2, case1);
-  //
-  //auto caseLV = new G4LogicalVolume(casing, G4Material::GetMaterial("G4_Al"), "Case");
-  //
-  //new G4PVPlacement( 0,                // no rotation
-  //               G4ThreeVector(0, 0, crystalZPos),  // at (0,0,0)
-  //               caseLV,          // its logical volume                         
-  //               "Casing",          // its name
-  //               worldLV,          // its mother  volume
-  //               false,            // no boolean operation
-  //               0,                // copy number
-  //               fCheckOverlaps);  // checking overlaps
-  //
-  //caseLV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,0.0)));
+  
+  G4Box* case1 = new G4Box("case1", caseXYInner/2., caseXYInner/2., caseZInner  );
+  G4Box* case2 = new G4Box("case2", (caseXYInner + caseXYWallThickness)/2. , (caseXYInner + caseXYWallThickness)/2., caseZInner + caseZWallThickness*2.);
+  G4SubtractionSolid * casing = new G4SubtractionSolid("casing", case2, case1);
+  
+  auto caseLV = new G4LogicalVolume(casing, G4Material::GetMaterial("G4_Al"), "Case");
+  
+  new G4PVPlacement( 0,                // no rotation
+                     G4ThreeVector(0, 0, crystalZPos),  // at (0,0,0)
+                     caseLV,           // its logical volume                         
+                     "Casing",         // its name
+                     worldLV,          // its mother  volume
+                     false,            // no boolean operation
+                     0,                // copy number
+                     fCheckOverlaps);  // checking overlaps
+  
+  caseLV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,0.0)));
 
   // Always return the physical World
   return worldPV;
