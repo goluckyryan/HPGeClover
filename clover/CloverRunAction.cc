@@ -64,8 +64,9 @@ void CloverRunAction::BeginOfRunAction(const G4Run* /*run*/)
   auto analysisManager = G4AnalysisManager::Instance();
 
   // Open an output file
-  G4String fileName = "Clover.root";
-  analysisManager->OpenFile(fileName);
+  //G4String fileName = "Clover.root";
+  //analysisManager->OpenFile(fileName);
+  analysisManager->OpenFile();
  
 }
 

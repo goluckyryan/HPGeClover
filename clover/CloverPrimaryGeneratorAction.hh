@@ -9,6 +9,7 @@
 
 class G4ParticleGun;
 class G4Event;
+class G4GenericMessenger;
 
 class CloverEventAction;
 
@@ -26,11 +27,17 @@ public:
   void SetRandomFlag(G4bool value);
 
 private:
+  void DefineCommands();
+  G4GenericMessenger* fMessenger;
+
   G4ParticleGun*  fParticleGun; // G4 particle gun
+
+  G4double fAngle ; 
 
   CloverEventAction * fEventAction;
 
-  std::vector<std::vector<G4double>> energyList;
+  std::vector<std::vector<G4double>> fEnergyList;
+
   
 };
 

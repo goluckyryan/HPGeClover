@@ -48,6 +48,7 @@ set(CLOVER_SCRIPTS
   init_vis.mac
   vis.mac
   my.in
+  analysis.C
 )
 
 foreach(_script ${CLOVER_SCRIPTS})

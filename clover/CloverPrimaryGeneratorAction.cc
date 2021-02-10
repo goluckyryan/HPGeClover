@@ -11,6 +11,7 @@
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4GenericMessenger.hh"
 #include "Randomize.hh"
 
 #include <vector>
@@ -20,7 +21,9 @@
 
 CloverPrimaryGeneratorAction::CloverPrimaryGeneratorAction(CloverEventAction * eventAction)
  : G4VUserPrimaryGeneratorAction(),
+   fMessenger(nullptr),
    fParticleGun(nullptr),
+   fAngle(180 * degree),
    fEventAction(eventAction)
 {
   G4int nofParticles = 1;
@@ -34,9 +37,8 @@ CloverPrimaryGeneratorAction::CloverPrimaryGeneratorAction(CloverEventAction * e
   fParticleGun->SetParticleEnergy(6.13*MeV);
   fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0));
 
-
   //Set energy for 16N iso decay  in MeV
-  energyList = {{0.120, 100}, //energy, branch
+  fEnergyList = {{0.120, 100}, //energy, branch
                 {1.775, 0.114},
                 {1.955, 0.036},
                 {2.742, 0.777},
@@ -46,14 +48,17 @@ CloverPrimaryGeneratorAction::CloverPrimaryGeneratorAction(CloverEventAction * e
                 {6.130, 68.0+0.777}};
 
   //accumulate the branch
-  G4int numEnergy = (G4int) energyList.size();
+  G4int numEnergy = (G4int) fEnergyList.size();
   for( int i = 1 ; i < numEnergy ; i++){
-    energyList[i][1] += energyList[i-1][1]; 
+    fEnergyList[i][1] += fEnergyList[i-1][1]; 
   }
   //renormalized the branching ratio
   for( int i = 0 ; i < numEnergy ; i++){
-    energyList[i][1] = energyList[i][1]/energyList[numEnergy-1][1];
+    fEnergyList[i][1] = fEnergyList[i][1]/fEnergyList[numEnergy-1][1];
   }
+
+  //Define command for this class
+  DefineCommands();
 
 }
 
@@ -62,6 +67,7 @@ CloverPrimaryGeneratorAction::CloverPrimaryGeneratorAction(CloverEventAction * e
 CloverPrimaryGeneratorAction::~CloverPrimaryGeneratorAction()
 {
   delete fParticleGun;
+  delete fMessenger;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -69,17 +75,8 @@ CloverPrimaryGeneratorAction::~CloverPrimaryGeneratorAction()
 void CloverPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
 
-  // Set Angle Need to make it as MACRO
-  //G4double cosAngle1 = cos(atan(0./20.));
-  //G4double cosAngle2 = cos(atan(20./20.));
-  //G4double minCosTheta = cosAngle1 > cosAngle2 ? cosAngle2 : cosAngle1;
-  //G4double maxCosTheta = cosAngle1 > cosAngle2 ? cosAngle1 : cosAngle2;
-  //G4double cosTheta = minCosTheta + abs(maxCosTheta- minCosTheta) * G4UniformRand();
-  
-  G4double cosTheta = 1.- (1.-cos(atan(10./25.)))*G4UniformRand();
+  G4double cosTheta = 1.- (1.-cos(fAngle ))*G4UniformRand();
 
-  //G4double cosTheta = G4UniformRand(); // downstream
-  
   G4double phi = 360*degree*G4UniformRand();
 
   G4double sinTheta = std::sqrt(1. - cosTheta*cosTheta);
@@ -97,10 +94,10 @@ void CloverPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   G4double beamEnergy = 6.13;
   
-  G4int numEnergy = (G4int) energyList.size();
+  G4int numEnergy = (G4int) fEnergyList.size();
   for( int i = 0; i < numEnergy  ; i++){
-    if( i == 0 &&   pop <= energyList[i][1] ) beamEnergy = energyList[0][0] ;
-    if( i > 0 &&  energyList[i-1][1] < pop && pop <= energyList[i][1] ) beamEnergy = energyList[i][0] ;
+    if( i == 0 &&   pop <= fEnergyList[i][1] ) beamEnergy = fEnergyList[0][0] ;
+    if( i > 0 &&  fEnergyList[i-1][1] < pop && pop <= fEnergyList[i][1] ) beamEnergy = fEnergyList[i][0] ;
   }
   
   fParticleGun->SetParticleEnergy(beamEnergy);
@@ -114,4 +111,20 @@ void CloverPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
+void CloverPrimaryGeneratorAction::DefineCommands()
+{
+  // Define /Clover/generator command directory using generic messenger class
+  fMessenger = new G4GenericMessenger(this, "/Clover/generator/", "Primary generator control");
+
+  // OpeningAngle command
+  auto& openingAngleCmd = fMessenger->DeclarePropertyWithUnit("OpeningAngle", "deg", fAngle, "Opening Angle of beam in deg");
+  openingAngleCmd.SetParameterName("t", true);
+  openingAngleCmd.SetRange("t>=0.");
+  openingAngleCmd.SetDefaultValue("180.");
+
+  
+
+}
 

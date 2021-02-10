@@ -14,7 +14,7 @@
 /run/verbose 2
 
 #
-/tracking/verbose 2
+/tracking/verbose 0
 
 #
 /event/verbose 0
@@ -23,21 +23,26 @@
 /process/verbose 0
 
 #------ Sensitive detetcor verbose control
-/hits/verbose 2
+/hits/verbose 0
 
 
 /globalField/verbose 1
-/globalField/setValue 0.0 0.0 2.5 tesla
+/globalField/setValue 0.0 0.0 0.0 tesla
 
 
 #particle, 
 #/gun/particle gamma
 #/gun/energy 6.13 MeV
 
+/Clover/generator/OpeningAngle  10 deg
+
 #/gun/particle proton
 #/gun/energy 1 MeV
 
+/analysis/setFileName test.root
+
 /run/printProgress 100000
-/run/beamOn 30
+#/run/beamOn 15000000
+/run/beamOn 50
 
 
