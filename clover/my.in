@@ -1,0 +1,43 @@
+#
+# type "help" in the interactive shell for command
+#
+# endit vis.mac for visualization open
+
+# Initialize kernel, 
+/run/initialize
+/control/saveHistory
+
+#
+/control/verbose 2
+
+#
+/run/verbose 2
+
+#
+/tracking/verbose 2
+
+#
+/event/verbose 0
+
+#
+/process/verbose 0
+
+#------ Sensitive detetcor verbose control
+/hits/verbose 2
+
+
+/globalField/verbose 1
+/globalField/setValue 0.0 0.0 2.5 tesla
+
+
+#particle, 
+#/gun/particle gamma
+#/gun/energy 6.13 MeV
+
+#/gun/particle proton
+#/gun/energy 1 MeV
+
+/run/printProgress 100000
+/run/beamOn 30
+
+

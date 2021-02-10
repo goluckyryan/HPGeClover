@@ -1,8 +1,4 @@
 
-*.Ex.txt
-*.Xsec.txt
-*.in
-*.out
 core.*
 *.o
 *.root
