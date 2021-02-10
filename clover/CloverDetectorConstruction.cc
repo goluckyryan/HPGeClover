@@ -95,21 +95,21 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   fNumOfCrystal = 4;
   G4double crystalLength = 8.*cm;
   G4double crystalRadius = 25.*mm;
-  G4double crystalZPos = 26*cm + crystalLength/2.;
+  G4double crystalZPos = 11.5*cm + crystalLength/2.;
   G4double cutXY = 46.0 * mm;
 
   G4double worldSizeZ  = 2*(crystalLength + crystalZPos);
   G4double worldSizeXY = worldSizeZ;
 
   //pipe
-  G4double pipeOuterRadius     = 200* mm;
-  G4double pipeWallThickness   =  3 * mm;
-  G4double pipeLength          = 100* mm;
+  G4double pipeOuterRadius     = 100* mm;
+  G4double pipeWallThickness   =  2 * mm;
+  G4double pipeLength          = 120* mm;
   G4double pipeZPos            = 0.*cm;
 
   //Clover casing
   G4double caseXYInner = 2*(cutXY + 1.0) * mm;
-  G4double caseZInner  = crystalLength + 6 * mm;
+  G4double caseZInner  = crystalLength/2. + 4 * mm;
   G4double caseXYWallThickness = 3.0 * mm;
   G4double caseZWallThickness = 3.0 * mm;
   
@@ -136,21 +136,36 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   // vaccum Pipe
   
   G4Tubs * pipe = new G4Tubs("pipe", pipeOuterRadius - pipeWallThickness , pipeOuterRadius, pipeLength, 0, 360*degree);
-  G4LogicalVolume * pipeLV = new G4LogicalVolume( pipe, G4Material::GetMaterial("G4_AIR"), "Pipe");
+  G4Tubs * pipe0 = new G4Tubs("pipe0", 0 , pipeOuterRadius, pipeLength, 0, 360*degree);
   
-  G4RotationMatrix * rot = new G4RotationMatrix();
-  rot->rotateY(90*degree);
+  G4RotationMatrix * rotX = new G4RotationMatrix(); rotX->rotateX(90*degree);
+  G4RotationMatrix * rotY = new G4RotationMatrix(); rotY->rotateY(90*degree);
   
-  new G4PVPlacement( rot,                // no rotation
+  G4SubtractionSolid * pipe1 = new G4SubtractionSolid("Pipe1", pipe, pipe0, rotY, G4ThreeVector());
+
+  G4LogicalVolume * pipe1LV = new G4LogicalVolume( pipe1, G4Material::GetMaterial("G4_Fe"), "Pipe");
+  G4LogicalVolume * pipe2LV = new G4LogicalVolume( pipe, G4Material::GetMaterial("G4_Fe"), "Pipe2");
+  
+  new G4PVPlacement( rotX,                // no rotation
                      G4ThreeVector(0, 0, pipeZPos),  // at (0,0,0)
-                     pipeLV,          // its logical volume                         
-                     "Pipe",          // its name
+                     pipe1LV,          // its logical volume                         
+                     "Pipe1",          // its name
+                     worldLV,          // its mother  volume
+                     false,            // no boolean operation
+                     0,                // copy number
+                     fCheckOverlaps);  // checking overlaps
+                     
+  new G4PVPlacement( rotY,                // no rotation
+                     G4ThreeVector(0, 0, pipeZPos),  // at (0,0,0)
+                     pipe2LV,          // its logical volume                         
+                     "Pipe2",          // its name
                      worldLV,          // its mother  volume
                      false,            // no boolean operation
                      0,                // copy number
                      fCheckOverlaps);  // checking overlaps
   
-  pipeLV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
+  pipe1LV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
+  pipe2LV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
                     
   // Crystals
   G4VisAttributes * crystalVisAtt= new G4VisAttributes(G4Colour(0.5,0.5,1.0));
@@ -163,8 +178,8 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
 
     G4double rho = (cutXY/2  + 0.3* mm) / sin(phi/2.);
 
-    G4Tubs * base = new G4Tubs("base",  0, crystalRadius, crystalLength, 0, 360*degree);
-    G4Box * cut = new G4Box("cut", cutXY/2. , cutXY/2. , crystalLength * 1.2);
+    G4Tubs * base = new G4Tubs("base",  0, crystalRadius, crystalLength/2., 0, 360*degree);
+    G4Box * cut = new G4Box("cut", cutXY/2. , cutXY/2. , crystalLength/2. * 1.2);
 
     G4IntersectionSolid * crystalS = new G4IntersectionSolid("HPGe", base, cut);
 
