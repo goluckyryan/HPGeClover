@@ -1,26 +1,22 @@
 #
 # type "help" in the interactive shell for command
 #
-# endit vis.mac for visualization open
+# endit vis.mac for visualization control
 
 # Initialize kernel, 
 /run/initialize
 /control/saveHistory
 
-#
+
 /control/verbose 2
-
-#
 /run/verbose 2
-
-#
 /tracking/verbose 0
-
-#
 /event/verbose 0
-
-#
 /process/verbose 0
+
+#------ disable visualization
+/vis/disable
+/tracking/storeTrajectory 0
 
 #------ Sensitive detetcor verbose control
 /hits/verbose 0
