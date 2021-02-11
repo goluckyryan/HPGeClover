@@ -11,14 +11,13 @@ class G4ParticleGun;
 class G4Event;
 class G4GenericMessenger;
 
-class CloverEventAction;
-
 /// The primary generator action class with particle gum.
 
 class CloverPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  CloverPrimaryGeneratorAction(CloverEventAction * eventAction);    
+
+  CloverPrimaryGeneratorAction();    
   virtual ~CloverPrimaryGeneratorAction();
 
   virtual void GeneratePrimaries(G4Event* event);
@@ -34,11 +33,8 @@ private:
 
   G4double fAngle ; 
 
-  CloverEventAction * fEventAction;
-
   std::vector<std::vector<G4double>> fEnergyList;
 
-  
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

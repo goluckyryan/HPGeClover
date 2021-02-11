@@ -30,13 +30,14 @@
 #/gun/energy 6.13 MeV
 
 #-------Override Opening angle
-/Clover/generator/OpeningAngle  20 deg
+/Clover/generator/OpeningAngle  10 deg
 
 #-------Override output root file
-/analysis/setFileName test.root
+/analysis/setFileName 000SingleCrystal.root
 
 /run/printProgress 100000
 #/run/beamOn 15000000
-/run/beamOn 50
+/run/beamOn 50000
+#/run/beamOn 20
 
 

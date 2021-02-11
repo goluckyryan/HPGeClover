@@ -19,12 +19,12 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-CloverPrimaryGeneratorAction::CloverPrimaryGeneratorAction(CloverEventAction * eventAction)
+CloverPrimaryGeneratorAction::CloverPrimaryGeneratorAction()
  : G4VUserPrimaryGeneratorAction(),
    fMessenger(nullptr),
    fParticleGun(nullptr),
-   fAngle(180 * degree),
-   fEventAction(eventAction)
+   fAngle(180 * degree)
+   //,fEventAction(eventAction)
 {
   G4int nofParticles = 1;
   fParticleGun = new G4ParticleGun(nofParticles);
@@ -101,13 +101,9 @@ void CloverPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   }
   
   fParticleGun->SetParticleEnergy(beamEnergy);
-  
-  G4double energy = fParticleGun->GetParticleEnergy();
+
+  //G4double energy = fParticleGun->GetParticleEnergy();
  
-  fEventAction->SaveEventTheta(acos(cosTheta) / degree);
-  fEventAction->SaveEventPhi(phi/degree);
-  fEventAction->SaveEventEnergy(energy);
-  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

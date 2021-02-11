@@ -33,7 +33,7 @@ void CloverActionInitialization::Build() const
   auto eventAction = new CloverEventAction;
   SetUserAction(eventAction);
 
-  SetUserAction(new CloverPrimaryGeneratorAction(eventAction));
+  SetUserAction(new CloverPrimaryGeneratorAction());
   SetUserAction(new CloverRunAction(eventAction));
 }  
 

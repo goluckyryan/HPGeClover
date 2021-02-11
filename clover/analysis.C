@@ -1,6 +1,6 @@
 {
 
-  TFile * file = new TFile("000bareCrystal.root");
+  TFile * file = new TFile("000Everything.root");
 
   TTree * tree = (TTree *) file->FindObjectAny("Clover");
 

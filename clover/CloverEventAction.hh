@@ -25,10 +25,6 @@ public:
   virtual void  BeginOfEventAction(const G4Event* event);
   virtual void    EndOfEventAction(const G4Event* event);
 
-  void SaveEventTheta(G4double theta) {eventTheta = theta;}
-  void SaveEventPhi(G4double Phi) {eventPhi = Phi;}
-  void SaveEventEnergy(G4double energy) {eventEnergy = energy;}
-
   std::vector<G4double>& GetdEList()  {return fdEList;};
   std::vector<G4double>& GetStepLengthList()  {return fdLList;};
 
@@ -40,10 +36,6 @@ private:
   
   // data members
   G4int  fCrystalHCID; // Hit collection ID
-
-  G4double eventTheta;
-  G4double eventPhi;
-  G4double eventEnergy;
 
   G4int fNDet;
 

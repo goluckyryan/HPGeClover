@@ -19,7 +19,8 @@ CloverCrystalHit::CloverCrystalHit()
    fCrysalID(-1),
    fEdep(0.),
    fPos(G4ThreeVector()),
-   fStepLength(0.)
+   fStepLength(0.),
+   fBeamEnergy(0.)
 {
 
 }
@@ -39,6 +40,7 @@ CloverCrystalHit::CloverCrystalHit(const CloverCrystalHit& right)
   fPos       = right.fPos;
 
   fStepLength = right.fStepLength;
+  fBeamEnergy = right.fBeamEnergy;
 
 }
 
@@ -52,6 +54,7 @@ const CloverCrystalHit& CloverCrystalHit::operator=(const CloverCrystalHit& righ
   fPos       = right.fPos;
 
   fStepLength = right.fStepLength;
+  fBeamEnergy = right.fBeamEnergy;
 
   return *this;
 }
@@ -68,6 +71,7 @@ G4bool CloverCrystalHit::operator==(const CloverCrystalHit& right) const
 void CloverCrystalHit::Print()
 {
   G4cout
+     << "Beam Energy : " << fBeamEnergy
      << "  trackID: " << fTrackID << " Crystal: " << fCrysalID 
      << "  Edep: "
      << std::setw(7) << G4BestUnit(fEdep,"Energy")

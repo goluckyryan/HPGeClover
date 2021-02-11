@@ -92,19 +92,18 @@ void CloverDetectorConstruction::DefineMaterials()
 G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
 {
   // Geometry parameters
-  fNumOfCrystal = 4;
   G4double crystalLength = 8.*cm;
   G4double crystalRadius = 25.*mm;
-  G4double crystalZPos = 11.5*cm + crystalLength/2.;
+  G4double crystalZPos = 14.*cm + crystalLength/2.;
   G4double cutXY = 46.0 * mm;
 
   G4double worldSizeZ  = 2*(crystalLength + crystalZPos);
   G4double worldSizeXY = worldSizeZ;
 
   //pipe
-  G4double pipeOuterRadius     = 100* mm;
-  G4double pipeWallThickness   =  2 * mm;
-  G4double pipeLength          = 120* mm;
+  G4double pipeOuterRadius     = 254/2.* mm;
+  G4double pipeWallThickness   =  5 * mm;
+  G4double pipeLength          = 160* mm;
   G4double pipeZPos            = 0.*cm;
 
   //Clover casing
@@ -166,7 +165,9 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
   
   pipe1LV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
   pipe2LV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,1.0)));
-                    
+
+  
+
   // Crystals
   G4VisAttributes * crystalVisAtt= new G4VisAttributes(G4Colour(0.5,0.5,1.0));
   crystalVisAtt->SetVisibility(true);
@@ -176,7 +177,8 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
     G4cout << " crystal name : " << name << G4endl;
     G4double phi = 360/fNumOfCrystal * degree;
 
-    G4double rho = (cutXY/2  + 0.3* mm) / sin(phi/2.);
+    G4double rho = 0;
+    if( fNumOfCrystal == 4 ) rho = (cutXY/2  + 0.3* mm) / sin(phi/2.);
 
     G4Tubs * base = new G4Tubs("base",  0, crystalRadius, crystalLength/2., 0, 360*degree);
     G4Box * cut = new G4Box("cut", cutXY/2. , cutXY/2. , crystalLength/2. * 1.2);
@@ -217,7 +219,7 @@ G4VPhysicalVolume* CloverDetectorConstruction::DefineVolumes()
                      fCheckOverlaps);  // checking overlaps
   
   caseLV->SetVisAttributes(new G4VisAttributes(G4Colour(1.0,1.0,0.0)));
-
+  
   // Always return the physical World
   return worldPV;
 }

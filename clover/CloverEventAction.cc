@@ -9,6 +9,7 @@
 #include "G4SDManager.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4UnitsTable.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "Randomize.hh"
 #include <iomanip>
@@ -28,11 +29,7 @@ CloverEventAction::CloverEventAction()
     fdLList.push_back(0.);
   }
 
-  eventTheta = 0;
-  eventPhi   = 0;
-  eventEnergy = 0;
-
-  }
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -98,12 +95,19 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
   //         << hc->GetSize() << " hits stored in this event" << G4endl;
   //}
 
-  //G4cout
-  //  << "Enegry : " <<  G4BestUnit( eventEnergy,"Energy") << G4endl
-  //  << "Theta  : " <<  eventTheta << G4endl
-  //  << "Phi    : " <<  eventPhi << G4endl;
-    
+  G4PrimaryVertex * pv = event->GetPrimaryVertex();
+  G4PrimaryParticle * pp = pv->GetPrimary();
+
+  G4double beamEnergy = pp->GetKineticEnergy() * 1000; // to keV
+
+  G4ThreeVector pmomt = pp->GetMomentumDirection();
+  G4double beamTheta = pmomt.theta() / degree;
+  G4double beamPhi = pmomt.phi() / degree;
   
+  //G4cout << "Beam Energy : " << beamEnergy << G4endl;
+  //       << "Beam theta : " << beamTheta << G4endl
+  //       << "Beam phi   : " << beamPhi << G4endl;
+    
   // Get hits collections IDs (only once)
   if ( fCrystalHCID == -1 ) {
     fCrystalHCID = G4SDManager::GetSDMpointer()->GetCollectionID("CrystalHitsCollection");
@@ -132,9 +136,9 @@ void CloverEventAction::EndOfEventAction(const G4Event* event)
   // fill ntuple
   analysisManager->FillNtupleIColumn(0, n_trajectories);
 
-  analysisManager->FillNtupleDColumn(3, eventTheta);
-  analysisManager->FillNtupleDColumn(4, eventPhi);
-  analysisManager->FillNtupleDColumn(5, eventEnergy);
+  analysisManager->FillNtupleDColumn(3, beamEnergy);
+  analysisManager->FillNtupleDColumn(4, beamTheta);
+  analysisManager->FillNtupleDColumn(5, beamPhi);
   
   analysisManager->AddNtupleRow();
 

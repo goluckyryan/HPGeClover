@@ -41,6 +41,7 @@ class CloverCrystalHit : public G4VHit
     void SetPos        (G4ThreeVector xyz){ fPos = xyz; };
     
     void SetStepLength (G4double sl)      { fStepLength += sl; };
+    void SetBeamEnergy (G4double be)      { fBeamEnergy = be;};
 
     // Get methods
     G4int GetTrackID() const     { return fTrackID; };
@@ -49,6 +50,7 @@ class CloverCrystalHit : public G4VHit
     G4ThreeVector GetPos() const { return fPos; };
 
     G4double GetStepLength () const  { return fStepLength ; };
+    G4double GetBeamEnergy () const  { return fBeamEnergy ; };
 
   private:
 
@@ -57,6 +59,7 @@ class CloverCrystalHit : public G4VHit
     G4double      fEdep;
     G4ThreeVector fPos;
     G4double      fStepLength;
+    G4double      fBeamEnergy;
 
 
 };

@@ -59,9 +59,7 @@ G4bool CloverCrystalSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*
 
   if ( edep==0. && stepLength == 0. ) return false;
 
-
   G4int crystalID = step->GetPreStepPoint()->GetTouchableHandle() ->GetCopyNumber();
-
   //----------- save hit in each crystal
   CloverCrystalHit * hit = (*fHitsCollection)[crystalID];
 
