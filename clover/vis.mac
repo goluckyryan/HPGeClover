@@ -1,8 +1,10 @@
 
 # Use this open statement to create a .wrl file suitable for
 # viewing in a VRML viewer:
-/vis/open VRML2FILE
+#/vis/open VRML2FILE
 
+# Use this open statement to create an OpenGL view:
+/vis/open OGL 600x600-0+0
 
 # Draw geometry:
 /vis/drawVolume
