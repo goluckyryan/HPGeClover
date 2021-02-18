@@ -27,6 +27,7 @@ class HeliosDetectorConstruction : public G4VUserDetectorConstruction
 
     // data members
     G4int   fNumOfPSD;     // number of PSD
+    G4int   fNumOfSide;    // number of side
 
     G4LogicalVolume**  fLogicPSD;    // pointer to the logical PSD
 

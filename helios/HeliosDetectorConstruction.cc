@@ -41,6 +41,7 @@ HeliosDetectorConstruction::HeliosDetectorConstruction()
    fCheckOverlaps(true)
 {
   fNumOfPSD = 24;  //also need to change the fNDet in HeliosEventAction.cc
+  fNumOfSide = 4;
   fLogicPSD = new G4LogicalVolume* [fNumOfPSD];
 }
 
@@ -92,8 +93,7 @@ void HeliosDetectorConstruction::DefineMaterials()
 G4VPhysicalVolume* HeliosDetectorConstruction::DefineVolumes()
 {
   // Geometry parameters
-  G4int    nSide = 4;
-  G4int    nDet = fNumOfPSD/nSide; // number det in each side
+  G4int    nDet = fNumOfPSD/fNumOfSide; // number det in each side
   G4double PSDLength = 50.*mm;
   G4double PSDWidth = 10.*mm;
   G4double PSDThick = 1.0*mm;
@@ -135,15 +135,14 @@ G4VPhysicalVolume* HeliosDetectorConstruction::DefineVolumes()
   
   G4SubtractionSolid * frame = new G4SubtractionSolid("frame", tube, hole, 0, G4ThreeVector());
 
-  G4LogicalVolume * frameLV = new G4LogicalVolume( frame, G4Material::GetMaterial("G4_Al"), "Frame");
+  G4LogicalVolume * frameLV = new G4LogicalVolume( frame, G4Material::GetMaterial("G4_Al"), "Array");
   
   frameLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.5,0.5,0.5)));
-  
   
   new G4PVPlacement( 0,                // no rotation
                      G4ThreeVector(0, 0, ArrayLength/2. + ArrayZPos - 40 * mm),  // at (0,0,0)
                      frameLV,          // its logical volume                         
-                     "Frame",          // its name
+                     "Array",          // its name
                      worldLV,          // its mother  volume
                      false,            // no boolean operation
                      0,                // copy number
@@ -155,9 +154,9 @@ G4VPhysicalVolume* HeliosDetectorConstruction::DefineVolumes()
   G4VisAttributes * PSDVisAtt= new G4VisAttributes(G4Colour(0.0,1.0,1.0));
   PSDVisAtt->SetVisibility(true);
 
-  for( G4int i = 0 ; i < nSide ; i++){
+  for( G4int i = 0 ; i < fNumOfSide ; i++){
 
-    G4double phi = 360*degree/nSide;
+    G4double phi = 360*degree/fNumOfSide;
 
     G4RotationMatrix * rotZ = new G4RotationMatrix(); rotZ->rotateZ(-i*(phi));
     
@@ -168,8 +167,7 @@ G4VPhysicalVolume* HeliosDetectorConstruction::DefineVolumes()
       G4String name = "PSD"+ std::to_string(i);
       G4cout << " PSD name : " << name << G4endl;
 
-
-      G4Box * psd = new G4Box("psd",   PSDThick/2.,PSDWidth/2., PSDLength/2.);
+      G4Box * psd = new G4Box("PSD",   PSDThick/2.,PSDWidth/2., PSDLength/2.);
 
       fLogicPSD[i] = new G4LogicalVolume(psd, fPSDMaterial, "PSDLV");
       fLogicPSD[i]->SetVisAttributes(PSDVisAtt);

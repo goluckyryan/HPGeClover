@@ -22,6 +22,7 @@ HeliosEventAction::HeliosEventAction()
    fPSDHCID(-1),
    fNDet(24) // number of PSD, must be matched in HeliosDetectorConstruction
 {
+
   fdEList.clear();
   fdLList.clear();
   for(int i = 0 ; i < fNDet; i++){
